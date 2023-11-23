@@ -1,0 +1,30 @@
+{
+    "variables" : {
+        "region" : "us-east-1",
+        "aws_profile": "richie-aws",
+        "source_ami" : "ami-0bb4c991fa89d4b9b",
+        "instance_type": "t2.micro"
+    },
+    "builders" : [
+        {
+            "type" : "amazon-ebs",
+            "profile" : "{{user `aws_profile`}}",
+            "region" : "{{user `region`}}",
+            "instance_type" : "{{user `instance_type`}}",
+            "source_ami" : "{{user `source_ami`}}",
+            "ssh_username" : "ec2-user",
+            "ami_name" : "jenkins-worker-{{timestamp}}",
+            "ami_description" : "Amazon Linux Image Jenkins Worker",
+            "run_tags" : {
+                "Name" : "packer-builder"
+            }
+        }
+    ],
+    "provisioners" : [
+        {
+            "type" : "shell",
+            "script" : "./setup.sh",
+            "execute_command" : "sudo -E -S sh '{{ .Path }}'"
+        }
+    ]
+}
